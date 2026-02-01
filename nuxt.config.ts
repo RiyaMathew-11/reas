@@ -17,6 +17,7 @@ export default defineNuxtConfig({
 
         // Open Graph / Facebook
         { property: 'og:type', content: 'website' },
+        {property: 'og:url', content: 'https://reas.in'},
         { property: 'og:title', content: 'reas - Simplifying academic citations' },
         { property: 'og:description', content: 'Manage academic citations seamlessly. Create and download formatted reference lists' },
         { property: 'og:image', content: '/reas_og.png' },

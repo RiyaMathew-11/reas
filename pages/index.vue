@@ -37,9 +37,10 @@
     <!-- Footer -->
     <footer class="border-t border-border bg-card mt-auto">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <p class="text-center text-sm text-muted-foreground">
-          [=] reas — Simplifying academic citations
-        </p>
+        <p class="flex flex-col gap-2 text-center text-sm text-muted-foreground">
+          <span>[=] reas  — Simplifying academic citations </span>
+          <span> <a class="underline" href="https://github.com/riyamathew-11/reas">Source Code - GitHub</a></span>
+        </p> 
       </div>
     </footer>
 
