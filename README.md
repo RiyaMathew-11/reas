@@ -1,5 +1,3 @@
-![Logo](public/reas_og.png)
-
 # [ = ] reas
 
 **Simplifying academic citations**
@@ -12,7 +10,7 @@ A lightweight, open-source reference list manager for creating and exporting bea
 
 This project was born from a conversation with a non-tech friend who found her current academic citation tools confusing to use - what should be straightforward became frustrating.
 
-I looked for alternatives, particularly . While tools like [Zotero](https://www.zotero.org/) are powerful, it lacked a straightforward way to export formatted reference lists.
+I looked for alternatives, particularly free and open-source options. While tools like [Zotero](https://www.zotero.org/) are powerful, it lacked a straightforward way to export formatted reference lists.
 
 **reas** is my attempt to fill this gap — a simple, accessible tool that does one thing well: helps you create, organize, and export formatted academic reference lists.
 
