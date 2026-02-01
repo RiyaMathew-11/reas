@@ -1,9 +1,11 @@
 <template>
   <div class="bg-card rounded-xl border border-border p-6 transition-shadow">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-serif font-semibold text-foreground">References <span class="text-muted">({{ references.length }})</span></h2>
+      <h2 class="text-2xl font-serif font-semibold text-foreground">References <span class="text-muted-foreground">({{ references.length }})</span></h2>
       <div class="flex items-center gap-2">
+        <label for="format-select" class="sr-only">Citation format</label>
         <select
+          id="format-select"
           v-model="selectedFormat"
           class="px-3 py-2 border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
         >

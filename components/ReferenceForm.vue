@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-3xl font-serif font-semibold text-foreground mb-6">{{ editingId ? 'Edit Reference' : 'Add New Reference' }}</h2>
+    <h2 class="text-3xl font-serif font-semibold text-foreground mb-6">{{ editingId ? 'Edit Reference' : 'New Reference' }}</h2>
 
     <form @submit.prevent="handleSubmit" class="space-y-5">
       <!-- Reference Type -->
