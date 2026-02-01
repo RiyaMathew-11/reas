@@ -1,24 +1,60 @@
 import type { Reference, ReferenceType } from '@/types/reference'
+import { openDB } from 'idb'
+
+const DB_NAME = 'reas-db'
+const STORE_NAME = 'references'
+const DB_VERSION = 1
 
 export const useReferences = () => {
   const references = useState<Reference[]>('references', () => [])
 
-  // Load from localStorage on client side
-  if (process.client) {
-    const stored = localStorage.getItem('references')
-    if (stored && references.value.length === 0) {
-      try {
-        references.value = JSON.parse(stored)
-      } catch (e) {
-        console.error('Failed to load references from localStorage', e)
-      }
-    }
+  // Initialize IndexedDB
+  const initDB = async () => {
+    if (!process.client) return null
+
+    return openDB(DB_NAME, DB_VERSION, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: 'id' })
+        }
+      },
+    })
   }
 
-  // Save to localStorage whenever references change
-  const saveToLocalStorage = () => {
-    if (process.client) {
-      localStorage.setItem('references', JSON.stringify(references.value))
+  // Load from IndexedDB on client side
+  if (process.client) {
+    initDB().then(async (db) => {
+      if (!db) return
+
+      try {
+        const allRefs = await db.getAll(STORE_NAME)
+        if (allRefs.length > 0) {
+          references.value = allRefs
+        }
+      } catch (e) {
+        console.error('Failed to load references from IndexedDB', e)
+      }
+    })
+  }
+
+  // Save to IndexedDB
+  const saveToIndexedDB = async () => {
+    if (!process.client) return
+
+    try {
+      const db = await initDB()
+      if (!db) return
+
+      const tx = db.transaction(STORE_NAME, 'readwrite')
+      await tx.store.clear()
+
+      for (const ref of references.value) {
+        await tx.store.put(ref)
+      }
+
+      await tx.done
+    } catch (e) {
+      console.error('Failed to save to IndexedDB:', e)
     }
   }
 
@@ -29,7 +65,7 @@ export const useReferences = () => {
     } as Reference
     references.value.push(newReference)
     sortReferences()
-    saveToLocalStorage()
+    saveToIndexedDB()
   }
 
   const updateReference = (id: string, updatedReference: Omit<Reference, 'id'>) => {
@@ -37,20 +73,16 @@ export const useReferences = () => {
     if (index !== -1) {
       references.value[index] = { ...updatedReference, id } as Reference
       sortReferences()
-      saveToLocalStorage()
+      saveToIndexedDB()
     }
   }
 
   const deleteReference = (id: string) => {
     references.value = references.value.filter(ref => ref.id !== id)
-    saveToLocalStorage()
+    saveToIndexedDB()
   }
 
-  const clearAllReferences = () => {
-    references.value = []
-    saveToLocalStorage()
-  }
-
+  // Need to sort references by author surname - as used in Harvard style referencing
   const sortReferences = () => {
     references.value.sort((a, b) => {
       const authorA = getFirstAuthorSurname(a.authors)
@@ -101,7 +133,6 @@ export const useReferences = () => {
     addReference,
     updateReference,
     deleteReference,
-    clearAllReferences,
     checkDuplicate
   }
 }
