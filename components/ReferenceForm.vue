@@ -1,15 +1,15 @@
 <template>
   <div>
-    <h2 class="text-2xl font-bold mb-6">{{ editingId ? 'Edit Reference' : 'Add New Reference' }}</h2>
+    <h2 class="text-3xl font-serif font-semibold text-foreground mb-6">{{ editingId ? 'Edit Reference' : 'Add New Reference' }}</h2>
 
-    <form @submit.prevent="handleSubmit" class="space-y-4">
+    <form @submit.prevent="handleSubmit" class="space-y-5">
       <!-- Reference Type -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Reference Type *</label>
+        <label class="block text-sm font-medium text-foreground mb-2">Reference Type *</label>
         <select
           v-model="formData.type"
           required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
         >
           <option value="journal">Journal Article</option>
           <option value="book">Book</option>
@@ -17,95 +17,182 @@
         </select>
       </div>
 
-      <!-- Common Fields -->
+      <!-- Authors Sub-table -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          {{ formData.type === 'website' ? 'Author(s)/Organization' : 'Author(s)' }} *
+        <label class="block text-sm font-medium text-foreground mb-2">
+          {{ formData.type === 'website' ? 'Author(s)/Organization (optional)' : 'Author(s)' }}
+          <span v-if="formData.type !== 'website'" class="text-destructive">*</span>
         </label>
-        <input
-          v-model="formData.authors"
-          required
-          type="text"
-          placeholder="Surname, I., Surname, I."
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <p class="text-xs text-gray-500 mt-1">Format: Surname, Initial(s). (e.g., Smith, J., Doe, A.)</p>
+
+        <!-- Authors List -->
+        <div v-if="authors.length > 0" class="mb-3 border border-border rounded-md overflow-hidden">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-accent/50">
+              <tr>
+                <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Type</th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Name</th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase w-20">Action</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="(author, index) in authors" :key="index">
+                <td class="px-3 py-2 text-xs">
+                  <span
+                    class="px-2 py-1 rounded-full text-xs font-semibold"
+                    :class="author.type === 'individual' ? 'bg-badge-journal/10 text-badge-journal' : 'bg-success/10 text-success'"
+                  >
+                    {{ author.type === 'individual' ? 'Individual' : 'Organization' }}
+                  </span>
+                </td>
+                <td class="px-3 py-2 text-sm">
+                  {{ author.type === 'individual' ? `${author.surname}, ${author.firstName}` : author.surname }}
+                </td>
+                <td class="px-3 py-2 text-sm">
+                  <button
+                    type="button"
+                    @click="removeAuthor(index)"
+                    class="text-destructive hover:text-destructive/80 text-xs"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add Author Form -->
+        <div class="space-y-3 p-3 bg-accent/50 rounded-md border border-border">
+          <!-- Toggle Switch -->
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-foreground">Author Type:</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                v-model="authorIsOrganization"
+                class="sr-only peer"
+              />
+              <div class="w-11 h-6 bg-primary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success"></div>
+              <span class="ml-3 text-sm font-medium text-foreground">
+                {{ authorIsOrganization ? 'Organization' : 'Individual' }}
+              </span>
+            </label>
+          </div>
+
+          <!-- Input Fields -->
+          <div v-if="!authorIsOrganization" class="grid grid-cols-2 gap-3">
+            <div>
+              <input
+                v-model="newAuthor.surname"
+                type="text"
+                placeholder="Surname"
+                class="w-full px-3 py-2 border border-input rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            <div>
+              <input
+                v-model="newAuthor.firstName"
+                type="text"
+                placeholder="First Name"
+                class="w-full px-3 py-2 border border-input rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          </div>
+          <div v-else>
+            <input
+              v-model="newAuthor.surname"
+              type="text"
+              placeholder="Organization/Author Name"
+              class="w-full px-3 py-2 border border-input rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          <button
+            type="button"
+            @click="addAuthor"
+            :disabled="!canAddAuthor"
+            class="w-full px-3 py-2 bg-primary/10 text-primary rounded-md hover:bg-primary/20 transition-colors text-sm font-medium disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
+          >
+            + Add Author
+          </button>
+        </div>
+        <p v-if="authors.length === 0 && formData.type !== 'website'" class="text-xs text-destructive mt-1">At least one author is required</p>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Year *</label>
+        <label class="block text-sm font-medium text-foreground mb-1">Year *</label>
         <input
           v-model="formData.year"
           required
           type="text"
           pattern="\d{4}"
           placeholder="2024"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
       <!-- Journal-specific fields -->
       <template v-if="formData.type === 'journal'">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Article Title *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Article Title *</label>
           <input
             v-model="formData.articleTitle"
             required
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Journal Name *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Journal Name *</label>
           <input
             v-model="formData.journalName"
             required
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Volume *</label>
+            <label class="block text-sm font-medium text-foreground mb-1">Volume *</label>
             <input
               v-model="formData.volume"
               required
               type="text"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Issue *</label>
+            <label class="block text-sm font-medium text-foreground mb-1">Issue *</label>
             <input
               v-model="formData.issue"
               required
               type="text"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Page Range *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Page Range *</label>
           <input
             v-model="formData.pageRange"
             required
             type="text"
             placeholder="1-10"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">DOI (optional)</label>
+          <label class="block text-sm font-medium text-foreground mb-1">DOI (optional)</label>
           <input
             v-model="formData.doi"
             type="text"
             placeholder="10.1000/xyz123"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
       </template>
@@ -113,43 +200,43 @@
       <!-- Book-specific fields -->
       <template v-if="formData.type === 'book'">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Book Title *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Book Title *</label>
           <input
             v-model="formData.bookTitle"
             required
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Publisher *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Publisher *</label>
           <input
             v-model="formData.publisher"
             required
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Place of Publication *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Place of Publication *</label>
           <input
             v-model="formData.placeOfPublication"
             required
             type="text"
             placeholder="London"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Edition (optional)</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Edition (optional)</label>
           <input
             v-model="formData.edition"
             type="text"
             placeholder="2nd"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
       </template>
@@ -157,49 +244,49 @@
       <!-- Website-specific fields -->
       <template v-if="formData.type === 'website'">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Page Title *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Page Title *</label>
           <input
             v-model="formData.pageTitle"
             required
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Website Name *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Website Name *</label>
           <input
             v-model="formData.websiteName"
             required
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">URL *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">URL *</label>
           <input
             v-model="formData.url"
             required
             type="url"
             placeholder="https://example.com"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Access Date *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Access Date *</label>
           <input
             v-model="formData.accessDate"
             required
             type="date"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
       </template>
 
       <!-- Duplicate Warning -->
-      <div v-if="duplicateWarning" class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+      <div v-if="duplicateWarning" class="bg-warning/10 border border-warning/20 text-warning px-4 py-3 rounded">
         <p class="text-sm">⚠️ A similar reference already exists in your list.</p>
       </div>
 
@@ -207,14 +294,14 @@
       <div class="flex gap-3 pt-4">
         <button
           type="submit"
-          class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
+          class="flex-1 bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
         >
           {{ editingId ? 'Update Reference' : 'Add Reference' }}
         </button>
         <button
           type="button"
           @click="cancelEdit"
-          class="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium"
+          class="flex-1 bg-gray-200 text-foreground px-4 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium"
         >
           Cancel
         </button>
@@ -224,7 +311,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ReferenceType } from '~/types/reference'
+import type { ReferenceType, Author } from '~/types/reference'
 
 const emit = defineEmits<{
   saved: []
@@ -238,9 +325,21 @@ const props = defineProps<{
 
 const { addReference, updateReference, checkDuplicate } = useReferences()
 
+const authors = ref<Author[]>([])
+const authorIsOrganization = ref(false)
+const newAuthor = reactive({
+  surname: '',
+  firstName: ''
+})
+
+const canAddAuthor = computed(() => {
+  if (!newAuthor.surname) return false
+  if (!authorIsOrganization.value && !newAuthor.firstName) return false
+  return true
+})
+
 const formData = reactive<any>({
   type: 'journal' as ReferenceType,
-  authors: '',
   year: '',
   // Journal
   articleTitle: '',
@@ -263,24 +362,60 @@ const formData = reactive<any>({
 
 const duplicateWarning = ref(false)
 
+const addAuthor = () => {
+  if (!newAuthor.surname) return
+
+  if (authorIsOrganization.value) {
+    authors.value.push({
+      type: 'organization',
+      surname: newAuthor.surname.trim()
+    })
+  } else {
+    if (!newAuthor.firstName) return
+    authors.value.push({
+      type: 'individual',
+      surname: newAuthor.surname.trim(),
+      firstName: newAuthor.firstName.trim()
+    })
+  }
+
+  newAuthor.surname = ''
+  newAuthor.firstName = ''
+  authorIsOrganization.value = false
+}
+
+const removeAuthor = (index: number) => {
+  authors.value.splice(index, 1)
+}
+
 // Load editing data if provided
 watch(() => props.editingData, (data) => {
   if (data) {
     Object.assign(formData, data)
+    if (data.authors && Array.isArray(data.authors)) {
+      authors.value = [...data.authors]
+    }
   }
 }, { immediate: true })
 
 // Check for duplicates when key fields change
-watch([() => formData.authors, () => formData.year, () => formData.type], () => {
-  if (formData.authors && formData.year && !props.editingId) {
-    duplicateWarning.value = checkDuplicate(formData)
+watch([() => authors.value, () => formData.year, () => formData.type], () => {
+  if (authors.value.length > 0 && formData.year && !props.editingId) {
+    const refData = { ...formData, authors: authors.value }
+    duplicateWarning.value = checkDuplicate(refData)
   } else {
     duplicateWarning.value = false
   }
-})
+}, { deep: true })
 
 const handleSubmit = () => {
-  const referenceData = { ...formData }
+  // Authors are required for non-website references
+  if (formData.type !== 'website' && authors.value.length === 0) {
+    alert('Please add at least one author')
+    return
+  }
+
+  const referenceData = { ...formData, authors: authors.value }
 
   // Clean up fields not relevant to current type
   if (referenceData.type === 'journal') {
@@ -333,7 +468,6 @@ const cancelEdit = () => {
 
 const resetForm = () => {
   formData.type = 'journal'
-  formData.authors = ''
   formData.year = ''
   formData.articleTitle = ''
   formData.journalName = ''
@@ -349,6 +483,10 @@ const resetForm = () => {
   formData.websiteName = ''
   formData.url = ''
   formData.accessDate = ''
+  authors.value = []
+  newAuthor.surname = ''
+  newAuthor.firstName = ''
+  authorIsOrganization.value = false
   duplicateWarning.value = false
 }
 </script>

@@ -59,23 +59,29 @@ export const useReferences = () => {
     })
   }
 
-  const getFirstAuthorSurname = (authors: string): string => {
-    // Extract first author's surname
-    const firstAuthor = authors.split(',')[0].trim()
-    // If format is "Surname, Initial" return surname
-    if (firstAuthor.includes(',')) {
-      return firstAuthor.split(',')[0].trim()
+  const getFirstAuthorSurname = (authors: any): string => {
+    if (Array.isArray(authors) && authors.length > 0) {
+      return authors[0].surname || ''
     }
-    // If format is "Firstname Surname" return last word
-    const parts = firstAuthor.split(' ')
-    return parts[parts.length - 1]
+    // Fallback for old string format
+    if (typeof authors === 'string') {
+      const firstAuthor = authors.split(',')[0].trim()
+      if (firstAuthor.includes(',')) {
+        return firstAuthor.split(',')[0].trim()
+      }
+      const parts = firstAuthor.split(' ')
+      return parts[parts.length - 1]
+    }
+    return ''
   }
 
   const checkDuplicate = (reference: Omit<Reference, 'id'>): boolean => {
     return references.value.some(ref => {
       if (ref.type !== reference.type) return false
-      if (ref.authors !== reference.authors) return false
       if (ref.year !== reference.year) return false
+
+      // Compare authors
+      if (JSON.stringify(ref.authors) !== JSON.stringify(reference.authors)) return false
 
       switch (ref.type) {
         case 'journal':

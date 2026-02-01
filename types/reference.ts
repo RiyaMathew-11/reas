@@ -1,10 +1,16 @@
 export type ReferenceType = 'journal' | 'book' | 'website'
 export type FormatType = 'harvard' | 'apa' | 'mla'
 
+export interface Author {
+  type: 'individual' | 'organization'
+  surname: string
+  firstName?: string // Only for individuals
+}
+
 export interface BaseReference {
   id: string
   type: ReferenceType
-  authors: string
+  authors: Author[]
   year: string
 }
 
