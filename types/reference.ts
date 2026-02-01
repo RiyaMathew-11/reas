@@ -1,5 +1,7 @@
 export type ReferenceType = 'journal' | 'book' | 'website'
-export type FormatType = 'harvard' | 'apa' | 'mla'
+export type FormatType = 'harvard' | 'apa' | 'mla' 
+
+// Can add more reference types here
 
 export interface Author {
   type: 'individual' | 'organization'
@@ -41,3 +43,4 @@ export interface WebsiteReference extends BaseReference {
 }
 
 export type Reference = JournalReference | BookReference | WebsiteReference
+
