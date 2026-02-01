@@ -21,31 +21,31 @@ export default {
         background: 'hsl(209 40% 96%)',
         foreground: 'hsl(222 47% 11%)',
         primary: {
-          default: 'hsl(216 19% 26%)',
+          DEFAULT: 'hsl(216 19% 26%)',
           foreground: 'hsl(210 19% 98%)',
         },
         secondary: {
-          default: 'hsl(215 19% 34%)',
+          DEFAULT: 'hsl(215 19% 34%)',
           foreground: 'hsl(210 40% 98%)',
         },
         muted: {
-          default: 'hsl(215 20% 65%)',
+          DEFAULT: 'hsl(215 20% 65%)',
           foreground: 'hsl(222 47% 11%)',
         },
         accent: {
-          default: 'hsl(210 40% 98%)',
+          DEFAULT: 'hsl(210 40% 98%)',
           foreground: 'hsl(215 16% 46%)',
         },
         card: {
-          default: 'hsl(210 40% 98%)',
+          DEFAULT: 'hsl(210 40% 98%)',
           foreground: 'hsl(222 47% 11%)',
         },
         destructive: {
-          default: 'hsl(0 72% 50%)',
+          DEFAULT: 'hsl(0 72% 50%)',
           foreground: 'hsl(0 85% 97%)',
         },
         success: {
-          default: 'hsl(142 70% 40%)',
+          DEFAULT: 'hsl(142 70% 40%)',
           foreground: 'hsl(0 0% 100%)',
         },
       },

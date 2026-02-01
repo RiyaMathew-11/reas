@@ -8,8 +8,8 @@
           class="px-3 py-2 border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
         >
           <option value="harvard">Harvard</option>
-          <option value="apa">APA (Coming Soon)</option>
-          <option value="mla">MLA (Coming Soon)</option>
+          <option value="apa" disabled>APA (Coming Soon)</option>
+          <option value="mla" disabled>MLA (Coming Soon)</option>
         </select>
         <button
           v-if="references.length > 0"
