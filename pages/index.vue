@@ -26,18 +26,11 @@
       </div>
     </header>
 
-    <!-- Main Content: Stacked Layout -->
+    <!-- Main Content -->
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-      <div class="space-y-6 animate-fade-in">
-        <!-- Reference Table -->
-        <div>
-          <ReferenceTable @edit="handleEdit" />
-        </div>
-
-        <!-- Formatted Preview -->
-        <div>
-          <ReferencePreview />
-        </div>
+      <div class="animate-fade-in">
+        <!-- References -->
+        <ReferencePreview @edit="handleEdit" @delete="handleDelete" />
       </div>
     </main>
 
@@ -85,5 +78,12 @@ const handleCancelled = () => {
   editingId.value = undefined
   editingData.value = undefined
   showModal.value = false
+}
+
+const handleDelete = (id: string) => {
+  const { deleteReference } = useReferences()
+  if (confirm('Are you sure you want to delete this reference?')) {
+    deleteReference(id)
+  }
 }
 </script>
