@@ -1,12 +1,15 @@
 # [ = ] reas
 
-**Simplifying academic citations**
+### Simplifying academic citations
 
 A lightweight, open-source reference list manager for creating and exporting beautifully formatted citations.
 
+<img align="center" height="500" alt="Screenshot 2026-02-01 at 19 58 37" src="https://github.com/user-attachments/assets/49e09f47-8af6-4423-84aa-3e12d64f917e" />
+<br/>
+
 ---
 
-## 📖 Motivation
+## Motivation
 
 This project was born from a conversation with a non-tech friend who found her current academic citation tools confusing to use - what should be straightforward became frustrating.
 
@@ -78,7 +81,9 @@ pnpm build
 
 All data is stored locally in your browser—no account needed, works offline.
 
----
+### Exported document format
+
+<img height="400" alt="Screenshot 2026-02-01 at 20 00 20" src="https://github.com/user-attachments/assets/be6e93ce-4674-41f2-b88a-28aefa9f8067" />
 
 
 ---
