@@ -1,11 +1,17 @@
-import { Document, Packer, Paragraph, TextRun, AlignmentType, ExternalHyperlink } from 'docx'
 import type { Reference } from '@/types/reference'
+
+/**
+ * Composable for exporting references to DOCX format
+ * Uses docx library for client-side generation
+ */
 
 export const useDocxExport = () => {
   const { formatReference } = useFormatter()
 
   const exportToDocx = async (references: Reference[], format: string = 'harvard') => {
-    // Create document sections
+    // Lazy-load docx library only when export is triggered
+    const { Document, Packer, Paragraph, TextRun, AlignmentType, ExternalHyperlink } = await import('docx')
+
     const children: Paragraph[] = []
 
     // Add title - Bibliography
@@ -23,7 +29,7 @@ export const useDocxExport = () => {
       })
     )
 
-    // Add date created
+
     const today = new Date().toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'long',
@@ -39,21 +45,18 @@ export const useDocxExport = () => {
           })
         ],
         alignment: AlignmentType.LEFT,
-        spacing: { after: 600 } // Increased vertical space before references
+        spacing: { after: 600 }
       })
     )
 
-    // Add each reference with numbering
     references.forEach((ref, index) => {
       const formattedText = formatReference(ref, format as any)
 
-      // Split by <br> tags to handle line breaks
       const lines = formattedText.split('<br>')
 
       lines.forEach((line, lineIndex) => {
         const lineChildren: (TextRun | ExternalHyperlink)[] = []
 
-        // Add number prefix only on first line
         if (lineIndex === 0) {
           lineChildren.push(
             new TextRun({
@@ -64,11 +67,9 @@ export const useDocxExport = () => {
           )
         }
 
-        // Process the line for <em> tags and URLs
         const processLine = (text: string): (TextRun | ExternalHyperlink)[] => {
           const result: (TextRun | ExternalHyperlink)[] = []
 
-          // Split by <em> tags
           const parts = text.split(/<em>|<\/em>/)
 
           parts.forEach((part, partIndex) => {
@@ -76,7 +77,6 @@ export const useDocxExport = () => {
 
             const isItalic = partIndex % 2 === 1
 
-            // Check for URLs in this part
             const urlRegex = /(https?:\/\/[^\s]+)/g
             const urlParts = part.split(urlRegex)
 
@@ -84,7 +84,6 @@ export const useDocxExport = () => {
               if (!segment) return
 
               if (urlRegex.test(segment)) {
-                // This is a URL - create a hyperlink
                 result.push(
                   new ExternalHyperlink({
                     children: [
@@ -101,7 +100,6 @@ export const useDocxExport = () => {
                   })
                 )
               } else {
-                // Regular text
                 result.push(
                   new TextRun({
                     text: segment,
@@ -132,7 +130,6 @@ export const useDocxExport = () => {
       })
     })
 
-    // Create document
     const doc = new Document({
       sections: [
         {
@@ -142,7 +139,6 @@ export const useDocxExport = () => {
       ]
     })
 
-    // Generate and download
     const blob = await Packer.toBlob(doc)
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')

@@ -3,8 +3,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss'],
+  css: ['~/assets/css/fonts.css'],
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'en'
+      },
       title: 'reas - Simplifying academic citations',
       meta: [
         { charset: 'utf-8' },
@@ -27,11 +31,7 @@ export default defineNuxtConfig({
         { name: 'twitter:image', content: '/reas_og.png' },
         { name: 'twitter:image:alt', content: 'reas - Simplifying academic citations' }
       ],
-      link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Crimson+Pro:wght@400;500;600;700&display=swap' }
-      ]
+      link: []
     }
   }
 })

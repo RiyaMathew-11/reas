@@ -11,6 +11,8 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@fontsource/crimson-pro": "^5.2.8",
+    "@fontsource/dm-sans": "^5.2.8",
     "idb": "^8.0.3",
     "nuxt": "^4.3.0"
   },

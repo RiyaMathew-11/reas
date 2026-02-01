@@ -1,6 +1,11 @@
 import type { Reference, ReferenceType } from '@/types/reference'
 import { openDB } from 'idb'
 
+/**
+ * Composable for managing references with IndexedDB persistence
+ * @returns Object containing references array and CRUD operations
+ */
+
 const DB_NAME = 'reas-db'
 const STORE_NAME = 'references'
 const DB_VERSION = 1
@@ -111,8 +116,8 @@ export const useReferences = () => {
     return references.value.some(ref => {
       if (ref.type !== reference.type) return false
       if (ref.year !== reference.year) return false
-
-      // Compare authors
+      // Compare authors and titles to check for duplicates 
+      // TODO: This could be improved to handle more complex cases 
       if (JSON.stringify(ref.authors) !== JSON.stringify(reference.authors)) return false
 
       switch (ref.type) {

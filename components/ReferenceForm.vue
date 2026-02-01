@@ -5,8 +5,9 @@
     <form @submit.prevent="handleSubmit" class="space-y-5">
       <!-- Reference Type -->
       <div>
-        <label class="block text-sm font-medium text-foreground mb-2">Reference Type</label>
+        <label for="reference-type" class="block text-sm font-medium text-foreground mb-2">Reference Type</label>
         <select
+          id="reference-type"
           v-model="formData.type"
           class="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
         >
