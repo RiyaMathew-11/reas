@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-card rounded-xl border border-border shadow-card p-6 transition-shadow hover:shadow-card-hover">
+  <div class="bg-card rounded-xl border border-border p-6 transition-shadow">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-serif font-semibold text-foreground">Formatted Preview</h2>
+      <h2 class="text-2xl font-serif font-semibold text-foreground">References <span class="text-muted">({{ references.length }})</span></h2>
       <div class="flex items-center gap-2">
         <select
           v-model="selectedFormat"
@@ -11,16 +11,6 @@
           <option value="apa">APA (Coming Soon)</option>
           <option value="mla">MLA (Coming Soon)</option>
         </select>
-        <button
-          v-if="references.length > 0"
-          @click="handleCopy"
-          class="inline-flex items-center gap-2 bg-background text-foreground px-4 py-2 rounded-lg hover:bg-accent transition-all font-medium text-sm border border-input"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-          Copy
-        </button>
         <button
           v-if="references.length > 0"
           @click="handleExport"
@@ -35,23 +25,60 @@
       </div>
     </div>
 
-    <div v-if="references.length === 0" class="text-center py-20 text-muted-foreground">
-      <p class="text-sm">Add references to see the formatted bibliography</p>
+    <div v-if="references.length === 0" class="text-center py-20">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted/20 mb-4">
+        <svg class="w-7 h-7 text-foreground/80" fill="currentColor" viewBox="0 0 24 24">
+          <circle cx="9" cy="5" r="1.5"/>
+          <circle cx="9" cy="12" r="1.5"/>
+          <circle cx="9" cy="19" r="1.5"/>
+          <circle cx="15" cy="5" r="1.5"/>
+          <circle cx="15" cy="12" r="1.5"/>
+          <circle cx="15" cy="19" r="1.5"/>
+        </svg>
+      </div>
+      <p class="text-base font-medium text-foreground mb-1">No references yet</p>
+      <p class="text-sm text-muted-foreground">Click "Add Reference" to create your first entry</p>
     </div>
 
-    <div v-else class="space-y-6">
-      <div class="border-b border-border pb-3">
-        <h3 class="text-2xl font-serif font-semibold text-center text-foreground">Bibliography</h3>
-      </div>
-
-      <div class="space-y-4">
-        <div
-          v-for="ref in references"
-          :key="ref.id"
-          class="text-sm leading-relaxed text-foreground py-3 border-b border-border/50 last:border-0"
-          style="padding-left: 2rem; text-indent: -2rem;"
-        >
+    <div v-else class="space-y-3 text-left">
+      <div
+        v-for="ref in references"
+        :key="ref.id"
+        class="group relative text-sm leading-relaxed text-foreground p-4"
+      >
+        <div class="pr-24">
           <span v-html="formatReference(ref, selectedFormat)"></span>
+        </div>
+
+        <!-- Action Icons -->
+        <div class="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            @click="handleCopyOne(ref)"
+            class="p-2 hover:bg-accent rounded-md transition-colors"
+            title="Copy"
+          >
+            <svg class="w-4 h-4 text-muted-foreground hover:text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </button>
+          <button
+            @click="$emit('edit', ref)"
+            class="p-2 hover:bg-accent rounded-md transition-colors"
+            title="Edit"
+          >
+            <svg class="w-4 h-4 text-muted-foreground hover:text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+          <button
+            @click="$emit('delete', ref.id)"
+            class="p-2 hover:bg-destructive/10 rounded-md transition-colors"
+            title="Delete"
+          >
+            <svg class="w-4 h-4 text-destructive hover:text-destructive/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -59,6 +86,13 @@
 </template>
 
 <script setup lang="ts">
+import type { Reference } from '@/types/reference'
+
+defineEmits<{
+  edit: [reference: Reference]
+  delete: [id: string]
+}>()
+
 const { references } = useReferences()
 const { formatReference } = useFormatter()
 const { exportToDocx } = useDocxExport()
@@ -66,22 +100,12 @@ const { exportToDocx } = useDocxExport()
 const selectedFormat = ref('harvard')
 const isExporting = ref(false)
 
-const handleCopy = () => {
-  if (references.value.length === 0) return
+const handleCopyOne = (ref: Reference) => {
+  const formatted = formatReference(ref, selectedFormat.value as any)
+  const plainText = formatted.replace(/<br>/g, '\n').replace(/<em>/g, '').replace(/<\/em>/g, '')
 
-  // Generate plain text version
-  const bibliography = references.value
-    .map(ref => {
-      const formatted = formatReference(ref, selectedFormat.value as any)
-      // Remove HTML tags for plain text
-      return formatted.replace(/<em>/g, '').replace(/<\/em>/g, '')
-    })
-    .join('\n\n')
-
-  const fullText = `Bibliography\n\n${bibliography}`
-
-  navigator.clipboard.writeText(fullText).then(() => {
-    alert('Bibliography copied to clipboard!')
+  navigator.clipboard.writeText(plainText).then(() => {
+    alert('Reference copied to clipboard!')
   }).catch(err => {
     console.error('Failed to copy:', err)
     alert('Failed to copy to clipboard')

@@ -1,7 +1,7 @@
 import type { Reference, FormatType, Author } from '@/types/reference'
 
 export const useFormatter = () => {
-  const formatAuthors = (authors: Author[]): string => {
+  const formatAuthors = (authors?: Author[]): string => {
     if (!authors || authors.length === 0) return ''
 
     return authors.map((author, index) => {
@@ -51,7 +51,11 @@ export const useFormatter = () => {
 
   const formatHarvardJournal = (ref: Reference & { type: 'journal' }): string => {
     const authorsStr = formatAuthors(ref.authors)
-    let formatted = `${authorsStr} (${ref.year}) '${ref.articleTitle}', <em>${ref.journalName}</em>`
+    const year = ref.year || 'n.d.'
+    const title = ref.articleTitle || ''
+    const journal = ref.journalName || ''
+
+    let formatted = `${authorsStr} (${year}) '${title}', <em>${journal}</em>`
 
     if (ref.volume) {
       formatted += `, ${ref.volume}`
@@ -66,25 +70,59 @@ export const useFormatter = () => {
       formatted += `. doi: ${ref.doi}`
     }
 
+    if (ref.url) {
+      formatted += `<br>Available at: ${ref.url}`
+    }
+    if (ref.accessDate) {
+      formatted += ` [Accessed ${ref.accessDate}]`
+    }
+
     formatted += '.'
     return formatted
   }
 
   const formatHarvardBook = (ref: Reference & { type: 'book' }): string => {
     const authorsStr = formatAuthors(ref.authors)
-    let formatted = `${authorsStr} (${ref.year}) <em>${ref.bookTitle}</em>`
+    const year = ref.year || ''
+    const title = ref.bookTitle || ''
+    const place = ref.placeOfPublication || ''
+    const publisher = ref.publisher || ''
+
+    let formatted = `${authorsStr} (${year}) <em>${title}</em>`
 
     if (ref.edition) {
       formatted += `, ${ref.edition} edn`
     }
 
-    formatted += `. ${ref.placeOfPublication}: ${ref.publisher}.`
+    formatted += `. ${place}: ${publisher}.`
+
+    if (ref.url) {
+      formatted += `<br>Available at: ${ref.url}`
+    }
+    if (ref.accessDate) {
+      formatted += ` [Accessed ${ref.accessDate}]`
+    }
+
     return formatted
   }
 
   const formatHarvardWebsite = (ref: Reference & { type: 'website' }): string => {
     const authorsStr = formatAuthors(ref.authors)
-    let formatted = `${authorsStr} (${ref.year}) <em>${ref.pageTitle}</em>, ${ref.websiteName}. Available at: ${ref.url} (Accessed: ${ref.accessDate}).`
+    const year = ref.year || ''
+    const title = ref.pageTitle || ''
+    const siteName = ref.websiteName || ''
+    const url = ref.url || ''
+    const accessDate = ref.accessDate || ''
+
+    let formatted = `${authorsStr} (${year}) ${title}. [online] ${siteName}.`
+
+    if (url) {
+      formatted += `<br>Available at: ${url}`
+    }
+    if (accessDate) {
+      formatted += ` [Accessed ${accessDate}]`
+    }
+
     return formatted
   }
 

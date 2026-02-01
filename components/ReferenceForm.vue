@@ -5,10 +5,9 @@
     <form @submit.prevent="handleSubmit" class="space-y-5">
       <!-- Reference Type -->
       <div>
-        <label class="block text-sm font-medium text-foreground mb-2">Reference Type *</label>
+        <label class="block text-sm font-medium text-foreground mb-2">Reference Type</label>
         <select
           v-model="formData.type"
-          required
           class="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
         >
           <option value="journal">Journal Article</option>
@@ -20,8 +19,7 @@
       <!-- Authors Sub-table -->
       <div>
         <label class="block text-sm font-medium text-foreground mb-2">
-          {{ formData.type === 'website' ? 'Author(s)/Organization (optional)' : 'Author(s)' }}
-          <span v-if="formData.type !== 'website'" class="text-destructive">*</span>
+          Author(s)/Organization
         </label>
 
         <!-- Authors List -->
@@ -116,14 +114,12 @@
             + Add Author
           </button>
         </div>
-        <p v-if="authors.length === 0 && formData.type !== 'website'" class="text-xs text-destructive mt-1">At least one author is required</p>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-foreground mb-1">Year *</label>
+        <label class="block text-sm font-medium text-foreground mb-1">Year</label>
         <input
           v-model="formData.year"
-          required
           type="text"
           pattern="\d{4}"
           placeholder="2024"
@@ -134,53 +130,48 @@
       <!-- Journal-specific fields -->
       <template v-if="formData.type === 'journal'">
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Article Title *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Article Title</label>
           <input
             v-model="formData.articleTitle"
-            required
-            type="text"
+              type="text"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Journal Name *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Journal Name</label>
           <input
             v-model="formData.journalName"
-            required
-            type="text"
+              type="text"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-foreground mb-1">Volume *</label>
+            <label class="block text-sm font-medium text-foreground mb-1">Volume</label>
             <input
               v-model="formData.volume"
-              required
-              type="text"
+                  type="text"
               class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-foreground mb-1">Issue *</label>
+            <label class="block text-sm font-medium text-foreground mb-1">Issue</label>
             <input
               v-model="formData.issue"
-              required
-              type="text"
+                  type="text"
               class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Page Range *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Page Range</label>
           <input
             v-model="formData.pageRange"
-            required
-            type="text"
+              type="text"
             placeholder="1-10"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
@@ -195,36 +186,54 @@
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
+
+        <div>
+          <label class="block text-sm font-medium text-foreground mb-1">URL</label>
+          <input
+            v-model="formData.url"
+            type="url"
+            placeholder="https://example.com"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-foreground mb-1">Access Date</label>
+          <input
+            v-model="formData.accessDate"
+            type="text"
+            placeholder="24 Dec. 2024"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <p class="text-xs text-muted-foreground mt-1">Format: DD Mon. YYYY (e.g., 24 Dec. 2024)</p>
+        </div>
       </template>
 
       <!-- Book-specific fields -->
       <template v-if="formData.type === 'book'">
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Book Title *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Book Title</label>
           <input
             v-model="formData.bookTitle"
-            required
-            type="text"
+              type="text"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Publisher *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Publisher</label>
           <input
             v-model="formData.publisher"
-            required
-            type="text"
+              type="text"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Place of Publication *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Place of Publication</label>
           <input
             v-model="formData.placeOfPublication"
-            required
-            type="text"
+              type="text"
             placeholder="London"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
@@ -239,35 +248,11 @@
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
-      </template>
-
-      <!-- Website-specific fields -->
-      <template v-if="formData.type === 'website'">
-        <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Page Title *</label>
-          <input
-            v-model="formData.pageTitle"
-            required
-            type="text"
-            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
 
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Website Name *</label>
-          <input
-            v-model="formData.websiteName"
-            required
-            type="text"
-            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-foreground mb-1">URL *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">URL</label>
           <input
             v-model="formData.url"
-            required
             type="url"
             placeholder="https://example.com"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
@@ -275,13 +260,56 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-foreground mb-1">Access Date *</label>
+          <label class="block text-sm font-medium text-foreground mb-1">Access Date</label>
           <input
             v-model="formData.accessDate"
-            required
-            type="date"
+            type="text"
+            placeholder="24 Dec. 2024"
             class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           />
+          <p class="text-xs text-muted-foreground mt-1">Format: DD Mon. YYYY (e.g., 24 Dec. 2024)</p>
+        </div>
+      </template>
+
+      <!-- Website-specific fields -->
+      <template v-if="formData.type === 'website'">
+        <div>
+          <label class="block text-sm font-medium text-foreground mb-1">Page Title</label>
+          <input
+            v-model="formData.pageTitle"
+              type="text"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-foreground mb-1">Website Name</label>
+          <input
+            v-model="formData.websiteName"
+              type="text"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-foreground mb-1">URL</label>
+          <input
+            v-model="formData.url"
+              type="url"
+            placeholder="https://example.com"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-foreground mb-1">Access Date</label>
+          <input
+            v-model="formData.accessDate"
+            type="text"
+            placeholder="24 Dec. 2024"
+            class="w-full px-3 py-2 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <p class="text-xs text-muted-foreground mt-1">Format: DD Mon. YYYY (e.g., 24 Dec. 2024)</p>
         </div>
       </template>
 
@@ -409,11 +437,6 @@ watch([() => authors.value, () => formData.year, () => formData.type], () => {
 }, { deep: true })
 
 const handleSubmit = () => {
-  // Authors are required for non-website references
-  if (formData.type !== 'website' && authors.value.length === 0) {
-    alert('Please add at least one author')
-    return
-  }
 
   const referenceData = { ...formData, authors: authors.value }
 
@@ -425,8 +448,6 @@ const handleSubmit = () => {
     delete referenceData.edition
     delete referenceData.pageTitle
     delete referenceData.websiteName
-    delete referenceData.url
-    delete referenceData.accessDate
   } else if (referenceData.type === 'book') {
     delete referenceData.articleTitle
     delete referenceData.journalName
@@ -436,8 +457,6 @@ const handleSubmit = () => {
     delete referenceData.doi
     delete referenceData.pageTitle
     delete referenceData.websiteName
-    delete referenceData.url
-    delete referenceData.accessDate
   } else if (referenceData.type === 'website') {
     delete referenceData.articleTitle
     delete referenceData.journalName
