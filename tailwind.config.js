@@ -55,15 +55,15 @@ export default {
         sm: '0.25rem',
       },
       boxShadow: {
-        'card': '0 1px 3px 0 hsl(220 20% 15% / 0.04), 0 1px 2px -1px hsl(220 20% 15% / 0.04)',
-        'card-hover': '0 10px 25px -5px hsl(220 20% 15% / 0.1), 0 8px 10px -6px hsl(220 20% 15% / 0.06)',
+        'card': '0 0.0625rem 0.1875rem 0 hsl(220 20% 15% / 0.04), 0 0.0625rem 0.125rem -0.0625rem hsl(220 20% 15% / 0.04)',
+        'card-hover': '0 0.625rem 1.5625rem -0.3125rem hsl(220 20% 15% / 0.1), 0 0.5rem 0.625rem -0.375rem hsl(220 20% 15% / 0.06)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(4px)' },
+          '0%': { opacity: '0', transform: 'translateY(0.25rem)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },

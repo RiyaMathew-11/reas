@@ -4,23 +4,24 @@
     <header class="bg-card border-b border-border">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-              <span class="text-primary font-mono text-xl font-bold">[=]</span>
+          <div class="flex items-center gap-2 sm:gap-4">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+              <span class="text-primary font-mono text-lg sm:text-xl font-bold">[=]</span>
             </div>
             <div>
-              <h1 class="text-3xl font-serif font-bold text-foreground">reas</h1>
-              <p class="text-sm text-muted-foreground mt-0.5">Create and manage academic references with ease</p>
+              <h1 class="text-2xl sm:text-3xl font-serif font-bold text-foreground">reas</h1>
+              <p class="text-xs sm:text-sm text-muted-foreground mt-0.5 hidden sm:block">Create and manage academic references with ease</p>
             </div>
           </div>
           <button
             @click="showModal = true"
-            class="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:bg-secondary transition-all font-medium text-sm shadow-sm hover:shadow-md"
+            class="inline-flex items-center gap-2 bg-primary text-primary-foreground px-3 sm:px-5 py-2.5 rounded-lg hover:bg-secondary transition-all font-medium text-sm shadow-sm hover:shadow-md"
+            aria-label="Add Reference"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            Add Reference
+            <span class="hidden sm:inline">Add Reference</span>
           </button>
         </div>
       </div>
