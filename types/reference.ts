@@ -4,9 +4,9 @@ export type FormatType = 'harvard' | 'apa' | 'mla'
 // Can add more reference types here
 
 export interface Author {
-  type: 'individual' | 'organization'
   surname: string
-  firstName?: string // Only for individuals
+  firstName?: string 
+  // Some authors might not have a first name, so it's optional - if it's an organization, it will be just the surname as the name will be in one field
 }
 
 export interface BaseReference {

@@ -27,21 +27,12 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-accent/50">
               <tr>
-                <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Type</th>
                 <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Name</th>
                 <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase w-20">Action</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="(author, index) in authors" :key="index">
-                <td class="px-3 py-2 text-xs">
-                  <span
-                    class="px-2 py-1 rounded-full text-xs font-semibold"
-                    :class="author.type === 'individual' ? 'bg-badge-journal/10 text-badge-journal' : 'bg-success/10 text-success'"
-                  >
-                    {{ author.type === 'individual' ? 'Individual' : 'Organization' }}
-                  </span>
-                </td>
                 <td class="px-3 py-2 text-sm">
                   {{ author.type === 'individual' ? `${author.surname}, ${author.firstName}` : author.surname }}
                 </td>
@@ -59,26 +50,46 @@
           </table>
         </div>
 
-        <!-- Add Author Form -->
+        <!-- Add Author -->
         <div class="space-y-3 p-3 bg-accent/50 rounded-md border border-border">
-          <!-- Toggle Switch -->
+          <!-- Toggle Button for Name Type -->
           <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-foreground">Author Type:</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                v-model="authorIsOrganization"
-                class="sr-only peer"
-              />
-              <div class="w-11 h-6 bg-primary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success"></div>
-              <span class="ml-3 text-sm font-medium text-foreground">
-                {{ authorIsOrganization ? 'Organization' : 'Individual' }}
-              </span>
-            </label>
+            <span class="text-sm font-medium text-foreground">Name</span>
+            <div class="inline-flex rounded-lg border border-border bg-background p-1">
+              <!-- Two Column Format(Surname, Firstname) -->
+              <button
+                type="button"
+                @click="isTwoColumn = false"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all"
+                :class="!isTwoColumn
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <rect x="4" y="4" width="7" height="16" stroke-width="2" rx="1"/>
+                  <rect x="13" y="4" width="7" height="16" stroke-width="2" rx="1"/>
+                </svg>
+              </button>
+
+              <!-- One Column Format (Full Name -> typical for Organisations) -->
+              <button
+                type="button"
+                @click="isTwoColumn = true"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all"
+                :class="isTwoColumn
+                  ? 'bg-success text-white shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <rect x="6" y="4" width="12" height="16" stroke-width="2" rx="1"/>
+                </svg>
+                <span class="text-xs font-medium">One</span>
+              </button>
+            </div>
           </div>
 
           <!-- Input Fields -->
-          <div v-if="!authorIsOrganization" class="grid grid-cols-2 gap-3">
+          <div v-if="!isTwoColumn" class="grid grid-cols-2 gap-3">
             <div>
               <input
                 v-model="newAuthor.surname"
@@ -354,7 +365,7 @@ const props = defineProps<{
 const { addReference, updateReference, checkDuplicate } = useReferences()
 
 const authors = ref<Author[]>([])
-const authorIsOrganization = ref(false)
+const isTwoColumn = ref(false)
 const newAuthor = reactive({
   surname: '',
   firstName: ''
@@ -362,7 +373,7 @@ const newAuthor = reactive({
 
 const canAddAuthor = computed(() => {
   if (!newAuthor.surname) return false
-  if (!authorIsOrganization.value && !newAuthor.firstName) return false
+  if (!isTwoColumn.value && !newAuthor.firstName) return false
   return true
 })
 
@@ -393,15 +404,13 @@ const duplicateWarning = ref(false)
 const addAuthor = () => {
   if (!newAuthor.surname) return
 
-  if (authorIsOrganization.value) {
+  if (isTwoColumn.value) {
     authors.value.push({
-      type: 'organization',
       surname: newAuthor.surname.trim()
     })
   } else {
     if (!newAuthor.firstName) return
     authors.value.push({
-      type: 'individual',
       surname: newAuthor.surname.trim(),
       firstName: newAuthor.firstName.trim()
     })
@@ -409,7 +418,7 @@ const addAuthor = () => {
 
   newAuthor.surname = ''
   newAuthor.firstName = ''
-  authorIsOrganization.value = false
+  isTwoColumn.value = false
 }
 
 const removeAuthor = (index: number) => {
@@ -505,7 +514,7 @@ const resetForm = () => {
   authors.value = []
   newAuthor.surname = ''
   newAuthor.firstName = ''
-  authorIsOrganization.value = false
+  isTwoColumn.value = false
   duplicateWarning.value = false
 }
 </script>

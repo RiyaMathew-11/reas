@@ -21,38 +21,33 @@ export default {
         background: 'hsl(209 40% 96%)',
         foreground: 'hsl(222 47% 11%)',
         primary: {
-          DEFAULT: 'hsl(216 19% 26%)',
+          default: 'hsl(216 19% 26%)',
           foreground: 'hsl(210 19% 98%)',
         },
         secondary: {
-          DEFAULT: 'hsl(215 19% 34%)',
+          default: 'hsl(215 19% 34%)',
           foreground: 'hsl(210 40% 98%)',
         },
         muted: {
-          DEFAULT: 'hsl(215 20% 65%)',
+          default: 'hsl(215 20% 65%)',
           foreground: 'hsl(222 47% 11%)',
         },
         accent: {
-          DEFAULT: 'hsl(210 40% 98%)',
+          default: 'hsl(210 40% 98%)',
           foreground: 'hsl(215 16% 46%)',
         },
         card: {
-          DEFAULT: 'hsl(210 40% 98%)',
+          default: 'hsl(210 40% 98%)',
           foreground: 'hsl(222 47% 11%)',
         },
         destructive: {
-          DEFAULT: 'hsl(0 72% 50%)',
+          default: 'hsl(0 72% 50%)',
           foreground: 'hsl(0 85% 97%)',
         },
         success: {
-          DEFAULT: 'hsl(142 70% 40%)',
+          default: 'hsl(142 70% 40%)',
           foreground: 'hsl(0 0% 100%)',
         },
-        badge: {
-          journal: 'hsl(210 90% 55%)',
-          book: 'hsl(270 60% 55%)',
-          website: 'hsl(340 75% 55%)',
-        }
       },
       borderRadius: {
         lg: '0.5rem',

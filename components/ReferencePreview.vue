@@ -53,7 +53,7 @@
         <!-- Action Icons -->
         <div class="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
-            @click="handleCopyOne(ref)"
+            @click="handleCopy(ref)"
             class="p-2 hover:bg-accent rounded-md transition-colors"
             title="Copy"
           >
@@ -100,7 +100,7 @@ const { exportToDocx } = useDocxExport()
 const selectedFormat = ref('harvard')
 const isExporting = ref(false)
 
-const handleCopyOne = (ref: Reference) => {
+const handleCopy = (ref: Reference) => {
   const formatted = formatReference(ref, selectedFormat.value as any)
   const plainText = formatted.replace(/<br>/g, '\n').replace(/<em>/g, '').replace(/<\/em>/g, '')
 
