@@ -311,7 +311,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ReferenceType, Author } from '~/types/reference'
+import type { ReferenceType, Author } from '@/types/reference'
 
 const emit = defineEmits<{
   saved: []

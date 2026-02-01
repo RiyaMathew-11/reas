@@ -1,4 +1,4 @@
-import type { Reference, FormatType, Author } from '~/types/reference'
+import type { Reference, FormatType, Author } from '@/types/reference'
 
 export const useFormatter = () => {
   const formatAuthors = (authors: Author[]): string => {

@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Reference } from '~/types/reference'
+import type { Reference } from '@/types/reference'
 
 const showModal = ref(false)
 const editingId = ref<string | undefined>(undefined)

@@ -1,4 +1,4 @@
-import type { Reference, ReferenceType } from '~/types/reference'
+import type { Reference, ReferenceType } from '@/types/reference'
 
 export const useReferences = () => {
   const references = useState<Reference[]>('references', () => [])

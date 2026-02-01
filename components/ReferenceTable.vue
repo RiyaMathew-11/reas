@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Reference, Author } from '~/types/reference'
+import type { Reference, Author } from '@/types/reference'
 
 defineEmits<{
   edit: [reference: Reference]

@@ -1,5 +1,5 @@
 import { Document, Packer, Paragraph, TextRun, AlignmentType } from 'docx'
-import type { Reference } from '~/types/reference'
+import type { Reference } from '@/types/reference'
 
 export const useDocxExport = () => {
   const { formatReference } = useFormatter()
