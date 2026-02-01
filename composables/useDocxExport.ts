@@ -1,4 +1,4 @@
-import { Document, Packer, Paragraph, TextRun, AlignmentType } from 'docx'
+import { Document, Packer, Paragraph, TextRun, AlignmentType, ExternalHyperlink } from 'docx'
 import type { Reference } from '@/types/reference'
 
 export const useDocxExport = () => {
@@ -47,43 +47,89 @@ export const useDocxExport = () => {
     references.forEach((ref, index) => {
       const formattedText = formatReference(ref, format as any)
 
-      // Parse HTML-like tags for italic text
-      const textRuns: TextRun[] = []
+      // Split by <br> tags to handle line breaks
+      const lines = formattedText.split('<br>')
 
-      // Add number prefix
-      textRuns.push(
-        new TextRun({
-          text: `${index + 1}. `,
-          size: 24, // 12pt
-          bold: true
-        })
-      )
+      lines.forEach((line, lineIndex) => {
+        const lineChildren: (TextRun | ExternalHyperlink)[] = []
 
-      const parts = formattedText.split(/<em>|<\/em>/)
-
-      parts.forEach((part, partIndex) => {
-        if (part) {
-          textRuns.push(
+        // Add number prefix only on first line
+        if (lineIndex === 0) {
+          lineChildren.push(
             new TextRun({
-              text: part,
-              italics: partIndex % 2 === 1, // Odd indices are inside <em> tags
-              size: 24 // 12pt (size is in half-points, so 24 = 12pt)
+              text: `${index + 1}. `,
+              size: 24,
+              bold: true
             })
           )
         }
-      })
 
-      children.push(
-        new Paragraph({
-          children: textRuns,
-          alignment: AlignmentType.LEFT,
-          spacing: { after: 200 },
-          indent: {
-            left: 360, // Indent for wrapped lines
-            hanging: 360 // Hanging indent to align with text after number
-          }
-        })
-      )
+        // Process the line for <em> tags and URLs
+        const processLine = (text: string): (TextRun | ExternalHyperlink)[] => {
+          const result: (TextRun | ExternalHyperlink)[] = []
+
+          // Split by <em> tags
+          const parts = text.split(/<em>|<\/em>/)
+
+          parts.forEach((part, partIndex) => {
+            if (!part) return
+
+            const isItalic = partIndex % 2 === 1
+
+            // Check for URLs in this part
+            const urlRegex = /(https?:\/\/[^\s]+)/g
+            const urlParts = part.split(urlRegex)
+
+            urlParts.forEach((segment, segIndex) => {
+              if (!segment) return
+
+              if (urlRegex.test(segment)) {
+                // This is a URL - create a hyperlink
+                result.push(
+                  new ExternalHyperlink({
+                    children: [
+                      new TextRun({
+                        text: segment,
+                        size: 24,
+                        italics: isItalic,
+                        style: 'Hyperlink',
+                        color: '0563C1',
+                        underline: {}
+                      })
+                    ],
+                    link: segment
+                  })
+                )
+              } else {
+                // Regular text
+                result.push(
+                  new TextRun({
+                    text: segment,
+                    size: 24,
+                    italics: isItalic
+                  })
+                )
+              }
+            })
+          })
+
+          return result
+        }
+
+        lineChildren.push(...processLine(line))
+
+        children.push(
+          new Paragraph({
+            children: lineChildren,
+            alignment: AlignmentType.LEFT,
+            spacing: { after: lineIndex === lines.length - 1 ? 200 : 0 },
+            indent: {
+              left: 360,
+              hanging: lineIndex === 0 ? 360 : 0
+            }
+          })
+        )
+      })
     })
 
     // Create document
