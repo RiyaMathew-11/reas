@@ -9,7 +9,7 @@
               <span class="text-primary font-mono text-lg sm:text-xl font-bold">[=]</span>
             </div>
             <div>
-              <h1 class="text-2xl sm:text-3xl font-serif font-bold text-foreground">reas</h1>
+              <h1 class="text-2xl md:text-3xl font-serif font-bold text-foreground">reas</h1>
               <p class="text-xs sm:text-sm text-muted-foreground mt-0.5 hidden sm:block">Create and manage academic references with ease</p>
             </div>
           </div>

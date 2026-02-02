@@ -1,39 +1,37 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div
-        v-if="modelValue"
-        class="fixed inset-0 z-50 overflow-y-auto"
-        @click.self="close"
-      >
-        <!-- Backdrop -->
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
-
-        <!-- Modal -->
-        <div class="flex min-h-full items-center justify-center p-4">
-          <div
-            class="relative bg-card rounded-xl shadow-card-hover border border-border max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            @click.stop
-          >
-            <!-- Close button -->
-            <button
-              @click="close"
-              class="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10"
+  <ClientOnly>
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="modelValue"
+          class="fixed inset-0 z-50 overflow-y-auto"
+          @click.self="close"
+        >
+          <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+          <div class="flex min-h-full items-center justify-center p-4">
+            <div
+              class="relative bg-card rounded-xl shadow-card-hover border border-border max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              @click.stop
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              <button
+                @click="close"
+                class="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
 
-            <!-- Content -->
-            <div class="p-6">
-              <slot></slot>
+              <!-- Content goes here -->
+              <div class="p-6">
+                <slot></slot>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Transition>
-  </Teleport>
+      </Transition>
+    </Teleport>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
