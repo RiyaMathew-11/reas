@@ -29,7 +29,9 @@ export const useReferences = () => {
   // Load from IndexedDB on client side
   if (process.client) {
     initDB().then(async (db) => {
-      if (!db) return
+      if (!db) {
+        return
+      }
 
       try {
         const allRefs = await db.getAll(STORE_NAME)
@@ -37,7 +39,7 @@ export const useReferences = () => {
           references.value = allRefs
         }
       } catch (e) {
-        console.error('Failed to load references from IndexedDB', e)
+        console.error('❌ Failed to load references', e)
       }
     })
   }
@@ -49,23 +51,23 @@ export const useReferences = () => {
     try {
       const db = await initDB()
       if (!db) return
-
       const tx = db.transaction(STORE_NAME, 'readwrite')
       await tx.store.clear()
-
       for (const ref of references.value) {
-        await tx.store.put(ref)
+        const plainRef = JSON.parse(JSON.stringify(ref))
+        await tx.store.put(plainRef)
       }
 
       await tx.done
     } catch (e) {
-      console.error('Failed to save to IndexedDB:', e)
+      console.error('Failed to save reference', e)
     }
   }
 
   const addReference = (reference: Omit<Reference, 'id'>) => {
     const newReference = {
       ...reference,
+      // storing id including timestamp and random string to ensure unique id
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
     } as Reference
     references.value.push(newReference)
@@ -114,13 +116,13 @@ export const useReferences = () => {
 
   const checkDuplicate = (reference: Omit<Reference, 'id'>): boolean => {
     return references.value.some(ref => {
-      if (ref.type !== reference.type) return false
+      if (ref.type as ReferenceType !== reference.type) return false
       if (ref.year !== reference.year) return false
       // Compare authors and titles to check for duplicates 
       // TODO: This could be improved to handle more complex cases 
       if (JSON.stringify(ref.authors) !== JSON.stringify(reference.authors)) return false
 
-      switch (ref.type) {
+      switch (ref.type as ReferenceType) {
         case 'journal':
           return (ref as any).articleTitle === (reference as any).articleTitle
         case 'book':
